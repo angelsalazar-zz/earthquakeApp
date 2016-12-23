@@ -54,7 +54,7 @@ function onWindowLoad () {
         fillTable("topTenTable", dataManager.getData());
       }
     })
-    .catch(function (err) {
+    .catch(function (error) {
       alert(error);
     });
 
@@ -112,7 +112,8 @@ function onWindowLoad () {
           inputWrapper.classList.remove(successClass)
           place.blur();
           spinLoader('searchLoader', ajax.isLoading());
-          restore.classList.toggle('hide');
+          if (restore.classList.contains('hide'))
+            restore.classList.toggle('hide');
         })
         .catch(function (error) {
           alert(error);
