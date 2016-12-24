@@ -1,8 +1,4 @@
 "use strict";
-// Table.prototype.fillTable = function (array) {
-//
-// };
-// http://api.geonames.org/earthquakesJSON?north=89.45016124669523&south=-87.71179927260242&east=180&west=-180&username=angelsalazar1992&date=2016-12-23&minMagnitude=7
 window.addEventListener('load', onWindowLoad);
 
 function onWindowLoad () {
