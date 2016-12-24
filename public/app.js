@@ -33,16 +33,31 @@ function onWindowLoad () {
   var currentDate  = document.querySelector('#currentDate');
   var hint         = document.querySelector('#hint');
   var restore      = document.querySelector('#restore');
+  var toggleMap    = document.querySelector('#toggleMap');
+  var map          = document.querySelector('#map');
+  var topTenTable  = document.querySelector('#topTenTable');
 
   // Setting current date
   currentDate.innerHTML = topTenEarthquakes.date;
 
   // Display messageRow
   messageRow("earthquakeTable", "Seek a location or city first", "info");
-  // Init instance of Ajax and DataManager
-  var ajax         = new Ajax();
-  var dataManager  = new DataManager();
 
+  // Init instance of Ajax, DataManager and googleMap Object
+  var topTenDataManager = new DataManager();
+  var dataManager       = new DataManager();
+  var ajax              = new Ajax();
+  var googleMap;
+
+  // Define map options
+  var mapOptions   = {
+    center: {
+      lat: 0,
+      lng: 0
+    },
+    scrollwheel: false,
+    zoom: 1
+  };
   ajax
     .request({
       type : "GET",
@@ -50,8 +65,8 @@ function onWindowLoad () {
     })
     .then(function (response) {
       if (response.earthquakes.length) {
-        dataManager.setData(response.earthquakes);
-        fillTable("topTenTable", dataManager.getData());
+        topTenDataManager.setData(response.earthquakes);
+        fillTable("topTenTable", topTenDataManager.getData());
       }
     })
     .catch(function (error) {
@@ -63,6 +78,8 @@ function onWindowLoad () {
   place.addEventListener('keyup', onKeyUp);
   sortByDate.addEventListener('click', onSort);
   restore.addEventListener('click', onRestore);
+  toggleMap.addEventListener('click', onToggleMap);
+
   // CSS classes
   var successClass = 'has-success';
   var errorClass   = 'has-error';
@@ -70,7 +87,7 @@ function onWindowLoad () {
   var desc = "fa-sort-amount-desc";
 
   // Submit Callback
-  function onSubmit(e){
+  function onSubmit (e){
     e.preventDefault();
     if (!place.value) {
       inputWrapper.classList.add(errorClass);
@@ -123,7 +140,7 @@ function onWindowLoad () {
   }
 
   // Keyup callback
-  function onKeyUp() {
+  function onKeyUp () {
     if (this.value) {
       if (inputWrapper.classList.contains(errorClass)) {
         inputWrapper.classList.remove(errorClass);
@@ -154,8 +171,18 @@ function onWindowLoad () {
   }
 
   // Click callback for restore button
-  function onRestore(e) {
+  function onRestore (e) {
     fillTable("earthquakeTable", dataManager.getData());
+  }
+
+  // Click callback for toggleMap button
+  function onToggleMap (e) {
+    topTenTable.classList.toggle('hide');
+    var hide = map.classList.toggle('hide');
+    if (!hide) {
+      googleMap = new google.maps.Map(map, mapOptions);
+      setMarkers(googleMap, topTenDataManager.getData());
+    }
   }
   // Helpers
   /**
@@ -206,10 +233,22 @@ function onWindowLoad () {
     messageCell.classList.add("text-center");
 
     messageCell.innerHTML = message;
-  }
+  };
+
   function spinLoader (spinnerId) {
     var loader  = document.querySelector('#' + spinnerId);
     loader.classList.toggle('hide');
+  };
+
+  function setMarkers (googleMap, data) {
+    data
+      .forEach(function (record) {
+        var marker = new google.maps.Marker({
+                map: googleMap,
+                position: { lat : record.lat, lng : record.lng },
+                title: "Magnitud : " + record.magnitude
+              });
+      })
   }
 
 };

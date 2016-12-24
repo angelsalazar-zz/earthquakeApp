@@ -73,6 +73,9 @@
           <div class="panel panel-default">
             <div class="panel-heading">
               Top 10 largest earthquakes in the world recorded until <strong><span id="currentDate"></span></strong>
+              <span class="pull-right">
+                <button class="btn btn-xs btn-default" id="toggleMap"><i class="fa fa-map" aria-hidden="true"></i></button>
+              </span>
             </div>
             <div class="panel-body">
               <table class="table table-striped table-hover" id="topTenTable">
@@ -89,11 +92,14 @@
 
                 </tbody>
               </table>
+              <div class="map hide" id="map"></div>
             </div>
           </div>
         </div>
       </div>
     </div>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB7pcNwKqsrFNBoDjs6aeD6aHSOrYIMXw8"
+    async defer></script>
     <script src="js/ajax.js"></script>
     <script src="js/dataManager.js"></script>
     <script src="app.js"></script>
